@@ -25,6 +25,11 @@ function Game()
                 'Callback', @(src,~) Action(r+1,c+1));
         end
     end
+    %Active Player text
+    statusText = uicontrol('Parent', fig, 'Style', 'text', ...
+        'String', sprintf('Hráč %s je na rade', playerActive), ...
+        'FontSize', 14, ...
+        'Position', [200 20 300 30]);
     %Player clicked button
     function Action(row,column)
     end
