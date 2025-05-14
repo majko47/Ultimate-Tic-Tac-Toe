@@ -2,7 +2,8 @@
 function Game()
     %Global values
     playerXColor = [1,0,0];
-    playerOColor = [0,1,0];
+    playerOColor = [0,0,1];
+    lastPosition = [0 0];
     %Initial parameters
     fig = figure('Name', 'Ultimate Tic-Tac-Toe', ...
         'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
