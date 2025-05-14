@@ -1,5 +1,8 @@
 %Initial function
 function Game()
+    %Global values
+    playerXColor = [1,0,0];
+    playerOColor = [0,1,0];
     %Initial parameters
     fig = figure('Name', 'Ultimate Tic-Tac-Toe', ...
         'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
@@ -9,6 +12,7 @@ function Game()
     spaceSize = [5 5];
     gridSpaceSize = [10 10];
     playerActive = 'X';
+    colorActive = playerXColor;
 
     %Generating Board
     buttons = gobjects(9, 9);
@@ -32,6 +36,18 @@ function Game()
         'Position', [200 20 300 30]);
     %Player clicked button
     function Action(row,column)
+        set(buttons(row,column), 'String', playerActive,'Enable','off');
+        switchPlayer()
+        set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
+    end
+    function switchPlayer()
+        if playerActive == 'X'
+            playerActive = 'O';
+            colorActive = playerOColor;
+        else
+            playerActive = 'X';
+            colorActive = playerXColor;
+        end
     end
 end
 
