@@ -1,28 +1,32 @@
 %Initial function
-function game()
+function Game()
     %Initial parameters
     fig = figure('Name', 'Ultimate Tic-Tac-Toe', ...
         'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
-        'Resize', 'off', 'Position', [400 200 600 600]);
+        'Resize', 'off', 'Position', [400 200 700 700]);
     board = repmat(' ', 3, 3, 3, 3);
-    
     btnSize = [60 60];
-    spaceSize = [10 10];
-    gridSpaceSize = [15 15];
+    spaceSize = [5 5];
+    gridSpaceSize = [10 10];
+    playerActive = 'X';
 
+    %Generating Board
     buttons = gobjects(9, 9);
-    for r = 1:9
-        for c = 1:9
-            xpos =
-            ypos =  % invertovanie Y
-            buttons(r,c) = uicontrol('Parent', fig, ...
+    for r = 0:8
+        for c = 0:8
+            xpos = 50 + c*btnSize(1) + c*spaceSize(1) + floor(c/3)*gridSpaceSize(1);
+            ypos = 640- (r*btnSize(2) + r*spaceSize(2) + floor(r/3)*gridSpaceSize(2));
+            buttons(r+1,c+1) = uicontrol('Parent', fig, ...
                 'Style', 'pushbutton', ...
                 'String', '', ...
                 'FontSize', 24, ...
                 'FontWeight', 'bold', ...
                 'Position', [xpos ypos btnSize], ...
-                'Callback', @(src,~) openMiniGame(r,c));
+                'Callback', @(src,~) Action(r+1,c+1));
         end
+    end
+    %Player clicked button
+    function Action(row,column)
     end
 end
 
