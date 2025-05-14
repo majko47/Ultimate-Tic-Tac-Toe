@@ -37,9 +37,24 @@ function Game()
         'Position', [200 20 300 30]);
     %Player clicked button
     function Action(row,column)
+        if(isequal(lastPosition,[0, 0]))
+        else
+            if(mod(row,3)==0)
+                y=3;
+            else
+                y=mod(row,3);
+            end
+            if(mod(column,3)==0)
+                x=3;
+            else
+                x=mod(column,3);
+            end
+            set(buttons(3*y-2:3*y,3*x-2:3*x),'BackgroundColor',colorActive);
+        end 
         set(buttons(row,column), 'String', playerActive,'Enable','off');
         switchPlayer()
         set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
+        lastPosition = [row, column]
     end
     function switchPlayer()
         if playerActive == 'X'
