@@ -165,3 +165,123 @@ function Game()
     end
 end
 
+
+
+%%==================================================================
+function piskvorky()
+
+    fig = figure('Name', 'Piskvorky ', ...
+        'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
+        'Resize', 'off', 'Position', [500 300 350 400]);
+    
+    % Initialize data
+    board = repmat(' ',3,3);
+    player = 'X';
+    
+    % Panel na gombiky
+    panel = uipanel('Parent', fig, 'Position', [0.05 0.25 0.9 0.7]);
+    
+    % Vytvoerenie gombikov 3x3
+    btnHandles = gobjects(3,3);
+    btnSize = [80 80];
+    spacing = 10;
+    startX = 20;
+    startY = 10;
+    
+    for r = 1:3
+        for c = 1:3
+            xpos = startX + (c-1)*(btnSize(1)+spacing);
+            ypos = startY + (3-r)*(btnSize(2)+spacing);
+            btnHandles(r,c) = uicontrol('Parent', panel, ...
+                'Style', 'pushbutton', ...
+                'String', '', ...
+                'FontSize', 36, ...
+                'FontWeight', 'bold', ...
+                'Position', [xpos ypos btnSize], ...
+                'Callback', @(src,~) buttonPressed(r,c));
+        end
+    end
+    
+    % Status hry
+    statusText = uicontrol('Parent', fig, 'Style', 'text', ...
+        'String', sprintf('Hráč %s'' je na rade', player), ...
+        'FontSize', 14, 'FontWeight', 'bold', ...
+        'Position', [50 50 250 40]);
+    
+    % Reset 
+    uicontrol('Parent', fig, 'Style', 'pushbutton', 'String', 'Restart', ...
+        'FontSize', 14, 'Position', [130 10 80 30], ...
+        'Callback', @restartGame);
+    
+    
+    function buttonPressed(r,c)
+        if board(r,c) == ' '
+            board(r,c) = player;
+            set(btnHandles(r,c), 'String', player, 'Enable', 'off');
+            if checkWin(player)
+                set(statusText, 'String', sprintf('Hráč %s vyhral!', player));
+                disableAllButtons();
+                msgbox(sprintf('Hráč %s vyhral! Gratulujem!', player), 'Koniec hry');
+            elseif all(board(:) ~= ' ')
+                set(statusText, 'String', 'Nastala remíza!');
+                msgbox('Nastala remíza!', 'Remíza');
+            else
+                switchPlayer();
+                set(statusText, 'String', sprintf('Hráč  %s je na rade', player));
+            end
+        end
+    end
+
+    function switchPlayer()
+        if player == 'X'
+            player = 'O';
+        else
+            player = 'X';
+        end
+    end
+
+    function disableAllButtons()
+        for rr = 1:3
+            for cc = 1:3
+                set(btnHandles(rr,cc), 'Enable', 'off');
+            end
+        end
+    end
+
+    function enableAllButtons()
+        for rr = 1:3
+            for cc = 1:3
+                set(btnHandles(rr,cc), 'Enable', 'on', 'String', '');
+            end
+        end
+    end
+
+    function restartGame(~,~)
+        board(:) = ' ';
+        player = 'X';
+        enableAllButtons();
+        set(statusText, 'String', sprintf('Hráč %s je na rade', player));
+    end
+
+    function won = checkWin(sym)
+        
+        won = false;
+        for i = 1:3
+            if all(board(i,:) == sym) || all(board(:,i) == sym)
+                won = true;
+                return
+            end
+        end
+        if board(1,1) == sym && board(2,2) == sym && board(3,3) == sym
+            won = true;
+            return
+        end
+        if board(1,3) == sym && board(2,2) == sym && board(3,1) == sym
+            won = true;
+            return
+        end
+    end
+
+end
+
+
