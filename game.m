@@ -65,5 +65,23 @@ function Game()
             colorActive = playerXColor;
         end
     end
+    function res = valueBBoard(val)
+        if(mod(val,3)==0)
+            res=3;
+        else
+            res=mod(val,3);
+        end
+    end
+    function res = inGrid(grid,val)
+        gridX = grid(2);
+        gridY = grid(1);
+        valX = val(2);
+        valY = val(1);
+        if(valX <= gridX*3 && valX >= (gridX*3-2))&&(valY <= gridY*3 && valY >= (gridY*3-2))
+            res = true;
+        else 
+            res = false;
+        end
+    end
 end
 
