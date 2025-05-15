@@ -9,6 +9,8 @@ function Game()
         'NumberTitle', 'off', 'MenuBar', 'none', 'ToolBar', 'none', ...
         'Resize', 'off', 'Position', [400 200 700 700]);
     board = repmat(' ', 3, 3, 3, 3);
+    boardBig = repmat(' ', 3, 3);
+    boardAvailible = ones(3);
     btnSize = [60 60];
     spaceSize = [5 5];
     gridSpaceSize = [10 10];
@@ -37,24 +39,38 @@ function Game()
         'Position', [200 20 300 30]);
     %Player clicked button
     function Action(row,column)
+        %Position on Big Board Row Next Move
+        y = valueBBoard(row);
+        %Position on Big Board Column Next Move
+        x = valueBBoard(column);
         if(isequal(lastPosition,[0, 0]))
+            %set(buttons(3*y-2:3*y,3*x-2:3*x),'BackgroundColor',colorActive);
+            set(buttons(row,column), 'String', playerActive,'Enable','off');
+            board(ceil(row/3),ceil(column/3), y, x) = playerActive;
+            switchPlayer()
+            set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
+            lastPosition = [row, column];
+            return;
+        end
+        %Check if move is legal
+        if(inGrid([valueBBoard(lastPosition(1)),valueBBoard(lastPosition(2))],[row,column]))
+            set(buttons(row,column), 'String', playerActive,'Enable','off');
         else
-            if(mod(row,3)==0)
-                y=3;
-            else
-                y=mod(row,3);
-            end
-            if(mod(column,3)==0)
-                x=3;
-            else
-                x=mod(column,3);
-            end
-            set(buttons(3*y-2:3*y,3*x-2:3*x),'BackgroundColor',colorActive);
-        end 
+            if(boardAvailible(valueBBoard(lastPosition(1)),valueBBoard(lastPosition(2)))==0)
         set(buttons(row,column), 'String', playerActive,'Enable','off');
+            else
+                msgbox('Hras v zlom poli!');
+            return;
+            end
+        end
+        board(ceil(row/3),ceil(column/3), y, x) = playerActive;
+        endSGrid(row,column);
         switchPlayer()
+        %Highlight availible grids to~do
+        if(boardAvailible(y,x)==0)
+        end
         set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
-        lastPosition = [row, column]
+        lastPosition = [row, column];
     end
     function switchPlayer()
         if playerActive == 'X'
@@ -81,6 +97,51 @@ function Game()
             res = true;
         else 
             res = false;
+        end
+    end
+    function endSGrid(row,column)
+        bigR = ceil(row/3);
+        bigC = ceil(column/3);
+        % Check win in Small Grid
+        if checkWinSGrid(squeeze(board(bigR,bigC,:,:)), playerActive)
+            boardBig(bigR, bigC) = playerActive;
+            lockDraw([bigR,bigC],playerActive);
+            boardAvailible(bigR,bigC) = 0;
+        % Check draw in Small Grid
+        elseif all(board(bigR, bigC, :, :) ~= ' ', 'all')
+            boardBig(bigR, bigC) = '=';
+            lockDraw([bigR,bigC],"=");
+            boardAvailible(bigR,bigC) = 0;
+        end
+    end
+    function won = checkWinSGrid(board, symbol)
+        won = false;
+        for i = 1:3
+            if all(board(i,:) == symbol) || all(board(:,i) == symbol)
+                won = true; return;
+            end
+        end
+        if board(1,1) == symbol && board(2,2) == symbol && board(3,3) == symbol
+            won = true; return;
+        end
+        if board(1,3) == symbol && board(2,2) == symbol && board(3,1) == symbol
+            won = true; return;
+        end
+    end
+    function lockDraw(grid,symbol)
+    gridX = grid(2);
+    gridY = grid(1);
+    set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',"white","Enable","Off","ForegroundColor","none");
+    switch(symbol)
+        case "X"
+            set(buttons(gridY*3-1,gridX*3-2),'BackgroundColor',"none");
+            set(buttons(gridY*3-1,gridX*3),'BackgroundColor',"none");
+            set(buttons(gridY*3-2,gridX*3-1),'BackgroundColor',"none");
+            set(buttons(gridY*3,gridX*3-1),'BackgroundColor',"none");
+        case "O"
+            set(buttons(gridY*3-1,gridX*3-1),'BackgroundColor',"black");
+        case "="
+            set(buttons(gridY*3-1,gridX*3-2:gridX*3),'BackgroundColor',"black");
         end
     end
 end
