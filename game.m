@@ -48,6 +48,7 @@ function Game()
             set(buttons(row,column), 'String', playerActive,'Enable','off');
             board(ceil(row/3),ceil(column/3), y, x) = playerActive;
             switchPlayer()
+            colorGrid([y,x],colorActive);
             set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
             lastPosition = [row, column];
             return;
@@ -68,6 +69,10 @@ function Game()
         switchPlayer()
         %Highlight availible grids to~do
         if(boardAvailible(y,x)==0)
+            
+        else
+            colorClear();
+            colorGrid([y,x],colorActive);
         end
         set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
         lastPosition = [row, column];
@@ -142,6 +147,20 @@ function Game()
             set(buttons(gridY*3-1,gridX*3-1),'BackgroundColor',"black");
         case "="
             set(buttons(gridY*3-1,gridX*3-2:gridX*3),'BackgroundColor',"black");
+    end
+    end
+    function colorGrid(grid,color)
+        gridX = grid(2);
+        gridY = grid(1);
+        set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',color);
+    end
+    function colorClear()
+        for r = 1:9
+            for c = 1:9
+                if(isequal(buttons(r,c).BackgroundColor,playerXColor)||isequal(buttons(r,c).BackgroundColor,playerOColor))
+                    set(buttons(r,c),'BackgroundColor',"black");
+                end
+            end 
         end
     end
 end
