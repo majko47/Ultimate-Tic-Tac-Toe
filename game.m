@@ -32,6 +32,12 @@ function Game()
                 'Callback', @(src,~) Action(r+1,c+1));
         end
     end
+initialBGColor = buttons(1, 1).BackgroundColor;
+        uicontrol('Parent', fig, 'Style', 'pushbutton', ...
+            'String', 'Reštart', ...
+            'FontSize', 14, ...
+            'Position', [300 60 100 30], ...
+            'Callback', @(~,~) restartGame());
     %Active Player text
     statusText = uicontrol('Parent', fig, 'Style', 'text', ...
         'String', sprintf('Hráč %s je na rade', playerActive), ...
@@ -167,7 +173,7 @@ function Game()
         for r = 1:9
             for c = 1:9
                 if(isequal(buttons(r,c).BackgroundColor,playerXColor)||isequal(buttons(r,c).BackgroundColor,playerOColor))
-                    set(buttons(r,c),'BackgroundColor',"black");
+                    set(buttons(r,c),'BackgroundColor',initialBGColor);
                 end
             end 
         end
@@ -182,8 +188,8 @@ function Game()
     end
 
     function restartGame()
-        close(fig);
-        Game();
+        delete(fig);
+        game();
     end
 end
 
