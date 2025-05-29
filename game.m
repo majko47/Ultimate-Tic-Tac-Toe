@@ -41,6 +41,7 @@ initialBGColor = buttons(1, 1).BackgroundColor;
     %Active Player text
     statusText = uicontrol('Parent', fig, 'Style', 'text', ...
         'String', sprintf('Hráč %s je na rade', playerActive), ...
+        'Foreground', colorActive,...
         'FontSize', 14, ...
         'Position', [200 20 300 30]);
     %Player clicked button
@@ -55,7 +56,7 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             board(ceil(row/3),ceil(column/3), y, x) = playerActive;
             switchPlayer()
             colorGrid([y,x],colorActive);
-            set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
+            set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive),'Foreground', colorActive);
             lastPosition = [row, column];
             return;
         end
@@ -73,14 +74,20 @@ initialBGColor = buttons(1, 1).BackgroundColor;
         board(ceil(row/3),ceil(column/3), y, x) = playerActive;
         endSGrid(row,column);
         switchPlayer()
-        %Highlight availible grids to~do
         if(boardAvailible(y,x)==0)
-            
+            colorClear();
+            for r = 1:3
+                for c = 1:3
+                    if(boardAvailible(r,c)==1)
+                         colorGrid([r,c],colorActive);
+                    end
+                end
+            end
         else
             colorClear();
             colorGrid([y,x],colorActive);
         end
-        set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive));
+        set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive),'Foreground', colorActive);
         lastPosition = [row, column];
     end
     function switchPlayer()
@@ -151,17 +158,18 @@ initialBGColor = buttons(1, 1).BackgroundColor;
     function lockDraw(grid,symbol)
     gridX = grid(2);
     gridY = grid(1);
-    set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',"white","Enable","Off","ForegroundColor","none");
+        set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',colorActive,"Enable","Off","ForegroundColor","none");
     switch(symbol)
         case "X"
-            set(buttons(gridY*3-1,gridX*3-2),'BackgroundColor',"none");
-            set(buttons(gridY*3-1,gridX*3),'BackgroundColor',"none");
-            set(buttons(gridY*3-2,gridX*3-1),'BackgroundColor',"none");
-            set(buttons(gridY*3,gridX*3-1),'BackgroundColor',"none");
+                set(buttons(gridY*3-1,gridX*3-2),'Visible',"off");
+                set(buttons(gridY*3-1,gridX*3),'Visible',"off");
+                set(buttons(gridY*3-2,gridX*3-1),'Visible',"off");
+                set(buttons(gridY*3,gridX*3-1),'Visible',"off");
         case "O"
-            set(buttons(gridY*3-1,gridX*3-1),'BackgroundColor',"black");
+                set(buttons(gridY*3-1,gridX*3-1),'Visible',"off");
         case "="
-            set(buttons(gridY*3-1,gridX*3-2:gridX*3),'BackgroundColor',"black");
+                set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',"white");
+                set(buttons(gridY*3-1,gridX*3-2:gridX*3),'Visible',"off");
     end
     end
     function colorGrid(grid,color)
@@ -172,8 +180,10 @@ initialBGColor = buttons(1, 1).BackgroundColor;
     function colorClear()
         for r = 1:9
             for c = 1:9
+                if(boardAvailible(ceil(r/3),ceil(c/3)))
                 if(isequal(buttons(r,c).BackgroundColor,playerXColor)||isequal(buttons(r,c).BackgroundColor,playerOColor))
                     set(buttons(r,c),'BackgroundColor',initialBGColor);
+                    end
                 end
             end 
         end
