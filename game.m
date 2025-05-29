@@ -32,7 +32,7 @@ function game()
                 'Callback', @(src,~) Action(r+1,c+1));
         end
     end
-initialBGColor = buttons(1, 1).BackgroundColor;
+    initialBGColor = buttons(1, 1).BackgroundColor;
         uicontrol('Parent', fig, 'Style', 'pushbutton', ...
             'String', 'Reštart', ...
             'FontSize', 14, ...
@@ -51,7 +51,6 @@ initialBGColor = buttons(1, 1).BackgroundColor;
         %Position on Big Board Column Next Move
         x = valueBBoard(column);
         if(isequal(lastPosition,[0, 0]))
-            %set(buttons(3*y-2:3*y,3*x-2:3*x),'BackgroundColor',colorActive);
             set(buttons(row,column), 'String', playerActive,'Enable','off');
             board(ceil(row/3),ceil(column/3), y, x) = playerActive;
             switchPlayer()
@@ -65,14 +64,14 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             set(buttons(row,column), 'String', playerActive,'Enable','off');
         else
             if(boardAvailible(valueBBoard(lastPosition(1)),valueBBoard(lastPosition(2)))==0)
-        set(buttons(row,column), 'String', playerActive,'Enable','off');
+            set(buttons(row,column), 'String', playerActive,'Enable','off');
             else
                 msgbox('Hras v zlom poli!');
             return;
             end
         end
         board(ceil(row/3),ceil(column/3), y, x) = playerActive;
-        fin=endSGrid(row,column);
+        fin = endSGrid(row,column);
         switchPlayer()
         if(boardAvailible(y,x)==0)
             colorClear();
@@ -88,7 +87,7 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             colorGrid([y,x],colorActive);
         end
         if(~fin)
-        set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive),'Foreground', colorActive);
+            set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive),'Foreground', colorActive);
         end
         lastPosition = [row, column];
     end
@@ -146,6 +145,7 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             fin = true;
         end
     end
+    % Check if game in small grid ended
     function won = checkWinSGrid(board, symbol)
         won = false;
         for i = 1:3
@@ -160,52 +160,52 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             won = true; return;
         end
     end
+    % Lock grid and draw small grid conclusion
     function lockDraw(grid,symbol)
-    gridX = grid(2);
-    gridY = grid(1);
+        gridX = grid(2);
+        gridY = grid(1);
         set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',colorActive,"Enable","Off","ForegroundColor","none");
-    switch(symbol)
-        case "X"
+        switch(symbol)
+            case "X"
                 set(buttons(gridY*3-1,gridX*3-2),'Visible',"off");
                 set(buttons(gridY*3-1,gridX*3),'Visible',"off");
                 set(buttons(gridY*3-2,gridX*3-1),'Visible',"off");
                 set(buttons(gridY*3,gridX*3-1),'Visible',"off");
-        case "O"
+            case "O"
                 set(buttons(gridY*3-1,gridX*3-1),'Visible',"off");
-        case "="
+            case "="
                 set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',"white");
                 set(buttons(gridY*3-1,gridX*3-2:gridX*3),'Visible',"off");
+        end
     end
-    end
+    % Set background color in grid
     function colorGrid(grid,color)
         gridX = grid(2);
         gridY = grid(1);
         set(buttons(3*gridY-2:3*gridY,3*gridX-2:3*gridX),'BackgroundColor',color);
     end
+    % Remove higlighted color in grids
     function colorClear()
         for r = 1:9
             for c = 1:9
                 if(boardAvailible(ceil(r/3),ceil(c/3)))
-                if(isequal(buttons(r,c).BackgroundColor,playerXColor)||isequal(buttons(r,c).BackgroundColor,playerOColor))
-                    set(buttons(r,c),'BackgroundColor',initialBGColor);
+                    if(isequal(buttons(r,c).BackgroundColor,playerXColor)||isequal(buttons(r,c).BackgroundColor,playerOColor))
+                        set(buttons(r,c),'BackgroundColor',initialBGColor);
                     end
                 end
             end 
         end
     end
+    % Turn off all grid buttons
     function disableAllButtons()
         set(buttons, 'Enable', 'off');
-        uicontrol('Parent', fig, 'Style', 'pushbutton', ...
-            'String', 'Reštart', ...
-            'FontSize', 14, ...
-            'Position', [300 60 100 30], ...
-            'Callback', @(~,~) restartGame());
     end
-
+    % Restarts game
     function restartGame()
         delete(fig);
         game();
     end
+    % Shows conclusion of game
     function showWinText(winner)
         if winner == 'X' || winner == 'O'
             text = sprintf('Hráč %s vyhral hru!', winner);
