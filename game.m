@@ -72,7 +72,7 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             end
         end
         board(ceil(row/3),ceil(column/3), y, x) = playerActive;
-        endSGrid(row,column);
+        fin=endSGrid(row,column);
         switchPlayer()
         if(boardAvailible(y,x)==0)
             colorClear();
@@ -87,7 +87,9 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             colorClear();
             colorGrid([y,x],colorActive);
         end
+        if(~fin)
         set(statusText, 'String', sprintf('Hráč %s je na rade', playerActive),'Foreground', colorActive);
+        end
         lastPosition = [row, column];
     end
     function switchPlayer()
@@ -117,9 +119,10 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             res = false;
         end
     end
-    function endSGrid(row,column)
+    function fin = endSGrid(row,column)
         bigR = ceil(row/3);
         bigC = ceil(column/3);
+        fin = false;
         % Check win in Small Grid
         if checkWinSGrid(squeeze(board(bigR,bigC,:,:)), playerActive)
             boardBig(bigR, bigC) = playerActive;
@@ -131,14 +134,16 @@ initialBGColor = buttons(1, 1).BackgroundColor;
             lockDraw([bigR,bigC],"=");
             boardAvailible(bigR,bigC) = 0;
         end
+        % Check if game ended
         if checkWinSGrid(boardBig, playerActive)
-            msgbox(sprintf('Hráč %s vyhral hru!', playerActive));
             set(statusText, 'String', sprintf('Hráč %s vyhral hru!', playerActive));
+            showWinText(playerActive);
             disableAllButtons();
+            fin = true;
         elseif all(boardBig(:) ~= ' ')
-            msgbox('Remíza! Nikto nevyhral.');
-            set(statusText, 'String', 'Remíza! Nikto nevyhral.');
+            set(statusText, 'String', 'Remíza! Nikto nevyhral.','Foreground', "white");
             disableAllButtons();
+            fin = true;
         end
     end
     function won = checkWinSGrid(board, symbol)
@@ -200,6 +205,25 @@ initialBGColor = buttons(1, 1).BackgroundColor;
     function restartGame()
         delete(fig);
         game();
+    end
+    function showWinText(winner)
+        if winner == 'X' || winner == 'O'
+            text = sprintf('Hráč %s vyhral hru!', winner);
+            winColor = colorActive
+        else
+            winColor = "white";
+            text = sprintf('Remíza! Nikto nevyhral.');
+        end
+        uicontrol('Parent', fig, ...
+            'Style', 'text', ...
+            'String', text, ...
+            'FontSize', 36, ...
+            'FontWeight', 'bold', ...
+            'ForegroundColor', winColor, ...
+            'backgroundcolor',get(fig,'color'), ...
+            'HorizontalAlignment', 'center', ...
+            'Units', 'normalized', ...
+            'Position', [0.1 0.519 0.8 0.1]);
     end
 end
 
