@@ -1,5 +1,5 @@
 %Initial function
-function Game()
+function game()
     %Global values
     playerXColor = [1,0,0];
     playerOColor = [0,0,1];
